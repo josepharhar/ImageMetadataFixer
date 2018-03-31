@@ -1,4 +1,4 @@
-FLAGS = -std=c++11
+FLAGS = -std=gnu++11
 
 fixer: fixer.cc
 	g++ $(FLAGS) $< -o $@
