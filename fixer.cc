@@ -4,8 +4,13 @@
 #include <exiv2/exiv2.hpp>
 
 int main(int argc, char** argv) {
-  if (argc != 3 || argc != 4) {
+  if (argc != 3 && argc != 4) {
     printf("usage: %s <image> <offset> [commit]\n", argv[0]);
+    printf("  received:");
+    for (int i = 0; i < argc; i++) {
+      printf(" %s", argv[i]);
+    }
+    printf("\n");
     return 0;
   }
   int offset = atoi(argv[2]);
@@ -27,6 +32,8 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  printf("fixing %s, offset: %d, commit: %d\n", argv[1], offset, commit);
+
   const char* tag_names[] = {
     "Exif.Image.DateTime",
     "Exif.Photo.DateTimeOriginal",
@@ -36,7 +43,7 @@ int main(int argc, char** argv) {
     const char* tag_name = tag_names[i];
     Exiv2::Exifdatum& tag = exif_data[tag_name];
     std::string date = tag.toString();
-    std::string original_date = date;
+    printf("%30s old: %s\n", tag_name, date.c_str());
 
     const char date_format[] = "%04u:%02u:%02u %02u:%02u:%02u";
     unsigned year = 0, month = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
@@ -51,8 +58,6 @@ int main(int argc, char** argv) {
     }
 
     sprintf((char*)date.c_str(), date_format, year, month, day, hours, minutes, seconds);
-
-    printf("%30s old: %s\n", tag_name, original_date.c_str());
     printf("%30s new: %s\n", tag_name, date.c_str());
 
     if (commit) {
