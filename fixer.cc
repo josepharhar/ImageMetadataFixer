@@ -3,6 +3,21 @@
 #include <iostream>
 #include <exiv2/exiv2.hpp>
 
+struct DateTime {
+  unsigned year;
+  unsigned month;
+  unsigned day;
+  unsigned hour;
+  unsigned minute;
+  unsigned second;
+};
+
+static DateTime AddHours(DateTime date_time, int hours) {
+}
+
+static void TestAddHours() {
+}
+
 int main(int argc, char** argv) {
   if (argc != 3 && argc != 4) {
     printf("usage: %s <image> <offset> [commit]\n", argv[0]);
@@ -43,21 +58,30 @@ int main(int argc, char** argv) {
     const char* tag_name = tag_names[i];
     Exiv2::Exifdatum& tag = exif_data[tag_name];
     std::string date = tag.toString();
-    printf("%30s old: %s\n", tag_name, date.c_str());
+    std::string old_date;
+    old_date += date;
 
     const char date_format[] = "%04u:%02u:%02u %02u:%02u:%02u";
     unsigned year = 0, month = 0, day = 0, hours = 0, minutes = 0, seconds = 0;
     sscanf(date.c_str(), date_format, &year, &month, &day, &hours, &minutes, &seconds);
 
-    if (((int)hours) + offset < 0) {
-      printf("HOURS UNDERFLOW!!!\n");
-    } else if (hours + offset >= 24) {
-      printf("HOURS OVERFLOW!!\n");
+    int new_hours_int = ((int)hours) + offset;
+    if (new_hours_int < 0) {
+      printf("HOURS UNDERFLOW: %d\n", new_hours_int);
+      day--;
+      hours = hours + (24 + offset);
+
+    } else if (new_hours_int >= 24) {
+      printf("HOURS OVERFLOW: %d\n", new_hours_int);
+      day++;
+      hours = hours + (offset - 24);
+
     } else {
       hours += offset;
     }
 
     sprintf((char*)date.c_str(), date_format, year, month, day, hours, minutes, seconds);
+    printf("%30s old: %s\n", tag_name, old_date.c_str());
     printf("%30s new: %s\n", tag_name, date.c_str());
 
     if (commit) {
