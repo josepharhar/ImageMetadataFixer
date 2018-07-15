@@ -3,21 +3,6 @@
 #include <iostream>
 #include <exiv2/exiv2.hpp>
 
-struct DateTime {
-  unsigned year;
-  unsigned month;
-  unsigned day;
-  unsigned hour;
-  unsigned minute;
-  unsigned second;
-};
-
-static DateTime AddHours(DateTime date_time, int hours) {
-}
-
-static void TestAddHours() {
-}
-
 int main(int argc, char** argv) {
   if (argc != 3 && argc != 4) {
     printf("usage: %s <image> <offset> [commit]\n", argv[0]);
